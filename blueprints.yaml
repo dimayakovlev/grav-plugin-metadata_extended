@@ -1,0 +1,26 @@
+name: Metadata Extended
+version: 1.0.0
+description: "This plugin extended the metadata with twig variables."
+icon: sign-in
+author:
+  name: NunoPress LLC
+  email: hello@nunopress.com
+  url: http://nunopress.com
+homepage: https://github.com/nunopress/grav-plugin-metadata_extended
+demo: http://grav-demo.nunopress.com/plugins/metadata_extended
+keywords: "metadata, opengraph, facebook, plugin"
+bugs: https://github.com/nunopress/grav-plugin-metadata_extended/issues
+
+form:
+  validation: strict
+  fields:
+    enabled:
+        type: toggle
+        label: Plugin status
+        highlight: 1
+        default: 1
+        options:
+          1: Enabled
+          0: Disabled
+        validate:
+          type: bool
