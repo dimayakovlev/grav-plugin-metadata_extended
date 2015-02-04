@@ -5,6 +5,9 @@ use RocketTheme\Toolbox\Event\Event;
 
 class Metadata_ExtendedPlugin extends Plugin
 {
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return [
@@ -12,6 +15,9 @@ class Metadata_ExtendedPlugin extends Plugin
         ];
     }
 
+    /**
+     *
+     */
     public function onPluginsInitialized()
     {
         if ($this->isAdmin()) {
@@ -20,10 +26,15 @@ class Metadata_ExtendedPlugin extends Plugin
         }
 
         $this->enable([
-            'onPageProcessed' => ['onPageProcessed', 0]
+            'onPageProcessed'       => ['onPageProcessed', 0],
+            'onTwigTemplatePaths'   => ['onTwigTemplatePaths', 0],
+            'onTwigInitialized'     => ['onTwigInitialized', 0]
         ]);
     }
 
+    /**
+     * @param Event $event
+     */
     public function onPageProcessed(Event $event)
     {
         $twig_local = new \Twig_Environment(new \Twig_Loader_String());
@@ -66,5 +77,31 @@ class Metadata_ExtendedPlugin extends Plugin
         $page->metadata($page_metadata);
 
         $event->page = $page;
+    }
+
+    /**
+     *
+     */
+    public function onTwigTemplatePaths()
+    {
+        $this->grav['twig']->twig_paths[] = __DIR__ . '/templates';
+    }
+
+    /**
+     *
+     */
+    public function onTwigInitialized()
+    {
+        $this->grav['twig']->twig()->addFunction(
+            new \Twig_SimpleFunction('generate_metadata', [$this, 'generateMetadataFunction'], ['is_safe' => ['html']])
+        );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function generateMetadata()
+    {
+        return $this->grav['twig']->twig()->render('plugins/metadata_extended/metadata.html.twig', ['meta' => $this->grav['page']->metadata()]);
     }
 }
