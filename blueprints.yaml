@@ -10,7 +10,7 @@ homepage: https://github.com/nunopress/grav-plugin-metadata_extended
 #demo: http://grav-demo.nunopress.com/plugins/metadata_extended
 keywords: "metadata, opengraph, facebook, plugin"
 bugs: https://github.com/nunopress/grav-plugin-metadata_extended/issues
-docs: https://github.com/nunopress/grav-plugin-metadata_extended/README.md
+docs: https://github.com/nunopress/grav-plugin-metadata_extended/blob/develop/README.md
 
 form:
   validation: strict
