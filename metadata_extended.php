@@ -37,12 +37,17 @@ class Metadata_ExtendedPlugin extends Plugin
      */
     public function onPageProcessed(Event $event)
     {
-        $twig_local = new \Twig_Environment(new \Twig_Loader_String());
-
-        $twig_vars = $this->grav['twig']->twig_vars;
-
+        $uri = $this->grav['uri'];
         $page = $event['page'];
+
+        if ($uri->url(true) != $page->url(true)) {
+            return;
+        }
+
         $page_metadata = $page->metadata();
+
+        $twig_local = $this->grav['twig'];
+        $twig_vars  = $this->grav['twig']->twig_vars;
 
         // Add page object to twig vars.
         $twig_vars['page'] = $page;
@@ -54,15 +59,16 @@ class Metadata_ExtendedPlugin extends Plugin
             if (is_array($value)) {
                 foreach ($value as $property => $prop_value) {
                     // Render the value with Twig.
-                    $prop_value = $twig_local->render($prop_value, $twig_vars);
+                    $prop_value = $twig_local->processString($prop_value, $twig_vars);
 
                     $prop_key = "{$key}:{$property}";
+
                     $page_metadata[$prop_key] = ['property' => $prop_key, 'content' => htmlspecialchars($prop_value, ENT_QUOTES)];
                 }
             // If it this is a standard meta data type
             } else {
                 // Render the value with Twig.
-                $value = $twig_local->render($value, $twig_vars);
+                $value = $twig_local->processString($value, $twig_vars);
 
                 $header_tag_http_equivs = ['content-type', 'default-style', 'refresh'];
 
@@ -95,13 +101,38 @@ class Metadata_ExtendedPlugin extends Plugin
         $this->grav['twig']->twig()->addFunction(
             new \Twig_SimpleFunction('generate_metadata', [$this, 'generateMetadataFunction'], ['is_safe' => ['html']])
         );
+
+        $this->grav['twig']->twig()->addFunction(
+            new \Twig_SimpleFunction('generate_title', [$this, 'generateTitleFunction'], ['is_safe' => ['html']])
+        );
     }
 
     /**
+     * Generate the HTML meta tags from page metas.
+     *
      * @return mixed
      */
-    public function generateMetadata()
+    public function generateMetadataFunction()
     {
         return $this->grav['twig']->twig()->render('plugins/metadata_extended/metadata.html.twig', ['meta' => $this->grav['page']->metadata()]);
+    }
+
+    /**
+     * Generate HTML title tag content.
+     *
+     * @return string
+     */
+    public function generateTitleFunction()
+    {
+        $page = $this->grav['page'];
+        $site = $this->grav['config']->get('site');
+
+        if ($page->header()->title and ($page->url() != $this->grav['base_url'] or 'error' == $page->template())) {
+            $title = $page->header()->title() . ' ' . $separator . ' ' . $site['title'];
+        } else {
+            $title = $site['title'];
+        }
+
+        return $title;
     }
 }

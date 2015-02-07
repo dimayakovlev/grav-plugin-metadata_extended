@@ -54,7 +54,10 @@ Another nice feature is the generate metadata tags into your theme, for this you
     
 You can customize the design of form override the files in `user/plugins/metadata_extended/templates/plugins/metadata_extended/` to `user/themes/your-theme/templates/plugins/metadata_extended/` but is useless because is a standard HTML code.
 
+With the v1.0.1 we added another nice Twig function for HTML title tag <code>{{ generate_title() }}</code>, is the same in Twig template:
 
+    {% if page.header.title and (page.url != base_url or 'error' == page.template) %}{{ page.header.title }} | {% endif %}{{ site.title }}
+    
 # Updating
 
 As development for this plugin continues, new versions may become available that add additional features and functionality, improve compatibility with newer Grav releases, and generally provide a better user experience. Updating this plugin is easy, and can be done through Grav's GPM system, as well as manually.

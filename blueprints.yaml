@@ -1,5 +1,5 @@
 name: Metadata Extended
-version: 1.0.0
+version: 1.0.1
 description: "This plugin extended the metadata with twig variables."
 icon: sign-in
 author:
